@@ -1,12 +1,19 @@
 <?php
 
-if(isset($_POST['logoutBtn'])){
-    $_SESSION['username'] = "";
-    $_SESSION['email'] = "";
-    $_SESSION['password'] = "";
-    $_SESSION['active'] = false;
+include ("connect.php");
+session_start();
+
+if (!$_SESSION['active']){
     header("Location: login.php");
-    exit;
+} else {
+    $username = $_SESSION['username'];
+
+    if(isset($_POST['logoutBtn'])){
+        session_unset();
+        $_SESSION['active'] = false;
+        header("Location: login.php");
+        exit;
+    }
 }
 
 ?>
@@ -15,6 +22,7 @@ if(isset($_POST['logoutBtn'])){
     <head>
     </head>
     <body>
+        <p>Hi <?php echo $username ?></p>
         <form method="post" action="profile.php">
             <p>
                 <input placeholder="Log Out" type="submit" name="logoutBtn" value="Log Out">

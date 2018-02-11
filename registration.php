@@ -1,60 +1,51 @@
 <?php
 
 include("connect.php");
+session_start();
 
-if (isset($_POST)){
-    if (isset($_POST['usernameRegister'])){
-        $_SESSION['usernameRegister'] = $_POST['usernameRegister'];
-    }
-    if (isset($_POST['emailRegister'])) {
-        $_SESSION['emailRegister'] = $_POST['emailRegister'];
-    }
-    if (isset($_POST['passwordRegister'])){
-        $_SESSION['passwordRegister'] = $_POST['passwordRegister'];
-    }
-    if (isset($_POST['confirmPasswordRegister'])){
-        $_SESSION['confirmPasswordRegister'] = $_POST['confirmPasswordRegister'];
-    }
-    if (isset($_POST['registerBtn'])){
-        $errors = [];
-
-        $username = $_SESSION['usernameRegister'];
-        if (empty($username) || $username[0]=='@' || is_numeric(substr($username, 0, 1)) || strlen($username) < 3) {
-            $errors['usernameErr'] = "Username shouldn't with @, first character must not be a number and username must have minimum 3 characters. ";
-        }
-        $email = $_SESSION['emailRegister'];
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            $errors['emailErr'] = "Enter valid email. ";
-        }
-        if (strlen($_SESSION['passwordRegister']) < 4){
-            $errors['passwordErr'] = "Password must have at least 4 characters. ";
-        }
-        if ($_SESSION['passwordRegister'] != $_SESSION['confirmPasswordRegister']) {
-            $errors['passwordError'] = "Passwords don't match. ";
-        }
-        $result = $connection->query("SELECT * FROM users WHERE username='$username'");
-        if ($result->num_rows != 0){
-            $errors['existErr'] = "Account with that username already exists. ";
-        }
-        $result = $connection->query("SELECT * FROM users WHERE email='$email'");
-        if ($result->num_rows != 0){
-            $errors['existError'] = "Account with that email already exists. ";
-        }
-
-        if(empty($errors)){
-            $password = $_SESSION['passwordRegister'];
-            $connection->query("INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')");
-            echo "Account created successfully";
-            header("Location: profile.php");
-            exit;
-        } else {
-            foreach ($errors as $error)
-                echo $error;
-            $_POST['passwordRegister'] = "";
-            $_POST['confirmPasswordRegister'] = "";
-            $_SESSION['passwordRegister'] = "";
-            $_SESSION['confirmPasswordRegister'] = "";
+if ($_SESSION['active']){
+    header("Location: profile.php");
+} else {
+    if (isset($_POST)){
+        if (isset($_POST['registerBtn'])){
+            // validation
             $errors = [];
+            if (empty($_POST['usernameRegister']) || $_POST['usernameRegister'][0]=='@' || is_numeric(substr($_POST['usernameRegister'], 0, 1)) || strlen($_POST['usernameRegister']) < 3)
+                $errors['usernameErr'] = "Username shouldn't start with `@`, first character must not be a number and username must have minimum 3 characters.<br>";
+            if (!filter_var($_POST['emailRegister'], FILTER_VALIDATE_EMAIL))
+                $errors['emailErr'] = "Enter valid email.<br>";
+            if (strlen($_POST['passwordRegister']) < 4)
+                $errors['passwordErr'] = "Password must have at least 4 characters.<br>";
+            if ($_POST['passwordRegister'] != $_POST['confirmPasswordRegister'])
+                $errors['passwordError'] = "Passwords don't match.<br>";
+            $result = $connection->prepare("SELECT * FROM users WHERE username = ?");
+            $result->bind_param("s", $_POST['usernameRegister']);
+            $result->execute();
+            if ($result->fetch() != 0)
+                $errors['existErr'] = "Account with that username already exists.<br>";
+            $result->close();
+            $result = $connection->prepare("SELECT * FROM users WHERE password = ?");
+            $result->bind_param("s", $_POST['passwordRegister']);
+            $result->execute();
+            if ($result->fetch() != 0)
+                $errors['existError'] = "Account with that email already exists.<br>";
+            $result->close();
+
+            //register if all is OK
+            if(empty($errors)){
+                $stmt = $connection->prepare("INSERT INTO users(username, email, password, picture) VALUES (?, ?, ?, 'https://goo.gl/Wdsvs7')");
+                $stmt->bind_param("sss", $_POST['usernameRegister'], $_POST['emailRegister'], password_hash($_POST['passwordRegister'], PASSWORD_DEFAULT));
+                $stmt->execute();
+                $stmt->close();
+                $_SESSION['username'] = $_POST['usernameRegister'];
+                $_SESSION['active'] = true;
+                header("Location: profile.php");
+                exit;
+            } else {
+                foreach ($errors as $error)
+                    echo $error;
+                $errors = [];
+            }
         }
     }
 }
