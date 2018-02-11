@@ -1,27 +1,29 @@
 <?php
 
 include("connect.php");
+session_start();
 
-if (isset($_POST)){
-    if (isset($_POST['username'])){
-        $_SESSION['username'] = $_POST['username'];
-    }
-    if (isset($_POST['password'])){
-        $_SESSION['password'] = $_POST['password'];
-    }
-    if (isset($_POST["loginBtn"])){
-        $username = $_SESSION['username'];
-        $password = $_SESSION['password'];
-        $result = $connection->query("SELECT * FROM users WHERE username='$username' AND password='$password'");
-        if ($result->num_rows == 0){
-            $_SESSION['password'] = "";
-            echo "Invalid username or password";
-        } else {
-            $_SESSION['username'] = "";
-            $_SESSION['password'] = "";
-            $_SESSION['active'] = true;
-            header("Location: profile.php");
-            exit;
+if ($_SESSION['active']){
+    header("Location: profile.php");
+} else {
+    if (isset($_POST)){
+        if (isset($_POST["loginBtn"])){
+            $result = mysqli_prepare($connection, "SELECT password FROM users WHERE username = ?");
+            mysqli_stmt_bind_param($result, "s", $_POST['usernameLogin']);
+            mysqli_stmt_execute($result);
+            mysqli_stmt_bind_result($result, $pass);
+            mysqli_stmt_fetch($result);
+
+            if (password_verify($_POST['passwordLogin'], $pass)){
+                $_SESSION['username'] = $_POST['usernameLogin'];
+                $_SESSION['active'] = true;
+                $result->close();
+                header("Location: profile.php");
+                exit;
+            } else {
+                $result->close();
+                echo "Invalid username or password";
+            }
         }
     }
 }
@@ -33,13 +35,13 @@ if (isset($_POST)){
     </head>
     <body>
         <h2>Log In</h2>
-        <form method="post" action="index.php">
+        <form method="POST" action="login.php">
             <h1></h1>
             <p>
-                <input placeholder="User Name" type="text" name="username">
+                <input placeholder="User Name" type="text" name="usernameLogin">
             </p>
             <p>
-                <input placeholder="Password" type="password" name="password">
+                <input placeholder="Password" type="password" name="passwordLogin">
             </p>
             <p>
                 <input value="Log In" type="submit" name="loginBtn">
