@@ -33,13 +33,12 @@ if ($_SESSION['active']){
 
             //register if all is OK
             if(empty($errors)){
-                $stmt = $connection->prepare("INSERT INTO users(username, email, password, picture) VALUES (?, ?, ?, 'https://goo.gl/Wdsvs7')");
+                $stmt = $connection->prepare("INSERT INTO users(username, email, password, picture, isAdmin) VALUES (?, ?, ?, 'https://goo.gl/Wdsvs7', 0)");
                 $stmt->bind_param("sss", $_POST['usernameRegister'], $_POST['emailRegister'], password_hash($_POST['passwordRegister'], PASSWORD_DEFAULT));
                 $stmt->execute();
                 $stmt->close();
-                $_SESSION['username'] = $_POST['usernameRegister'];
-                $_SESSION['active'] = true;
-                header("Location: profile.php");
+                $_SESSION['accountCreated'] = true;
+                header("Location: login.php");
                 exit;
             } else {
                 foreach ($errors as $error)

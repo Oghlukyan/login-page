@@ -7,10 +7,10 @@ if (!$_SESSION['active']){
     header("Location: login.php");
 } else {
     $username = $_SESSION['username'];
-
     if(isset($_POST['logoutBtn'])){
         session_unset();
         $_SESSION['active'] = false;
+        $_SESSION['accountCreated'] = false;
         header("Location: login.php");
         exit;
     }
@@ -24,9 +24,7 @@ if (!$_SESSION['active']){
     <body>
         <p>Hi <?php echo $username ?></p>
         <form method="post" action="profile.php">
-            <p>
-                <input placeholder="Log Out" type="submit" name="logoutBtn" value="Log Out">
-            </p>
+            <p> <input placeholder="Log Out" type="submit" name="logoutBtn" value="Log Out"> </p>
         </form>
     </body>
 </html>
