@@ -3,6 +3,11 @@
 include("connect.php");
 session_start();
 
+//echo phpinfo();
+//openssl support disabled?
+//mail("oghlukyan@gmail.com", "about account", "your account was deleted", "From: aoghlukyan@mail.ru");
+//echo "sent";
+
 if ($_SESSION['active']){
     header("Location: profile.php");
 } else {
@@ -30,7 +35,7 @@ if ($_SESSION['active']){
                 exit;
             } else {
                 $result->close();
-                echo "Invalid username or password";
+                echo "<h5 class='container-fluid text-danger'>Invalid username or password</h5>";
             }
         }
     }
@@ -42,13 +47,14 @@ if ($_SESSION['active']){
     <head>
     </head>
     <body>
-        <h2>Log In</h2>
-        <form method="POST" action="login.php">
-            <h1></h1>
-            <p> <input placeholder="User Name" type="text" name="usernameLogin"> </p>
-            <p> <input placeholder="Password" type="password" name="passwordLogin"> </p>
-            <p> <input value="Log In" type="submit" name="loginBtn"> </p>
-            <p> <a href="registration.php" type="submit" name="goToRegisterView">Don't have an account?</a> </p>
-        </form>
+        <div class="container-fluid">
+            <h2>Log In</h2>
+            <form method="POST" action="login.php" class="contaier-fluid">
+                <p> <input placeholder="User Name" type="text" name="usernameLogin"> </p>
+                <p> <input placeholder="Password" type="password" name="passwordLogin"> </p>
+                <p> <input class="btn-success" value="Log In" type="submit" name="loginBtn"> </p>
+                <p> <a class="btn-info" href="registration.php" type="submit" name="goToRegisterView">Don't have an account?</a> </p>
+            </form>
+        </div>
     </body>
 </html>

@@ -8,7 +8,7 @@ if (!$_SESSION['active']){
 } else if (!$_SESSION['isAdmin']){
     header("Location: profile.php");
 } else {
-    if(isset($_POST['backEdit'])){
+    if(isset($_POST['cancelEdit'])){
         $_SESSION['editableId'] = null;
         header("Location: profileAdmin.php");
         exit;
@@ -62,14 +62,17 @@ if (!$_SESSION['active']){
     <head>
     </head>
     <body>
-        <form method="post" action="edit.php">
-            <p> <input placeholder="Username" type="text" name="usernameEdit"> </p>
-            <p> <input placeholder="Email" type="text" name="emailEdit"> </p>
-            <p> <input placeholder="Password" type="password" name="passwordEdit"> </p>
-            <p> <input placeholder="Picture URL" type="text" name="pictureEdit"> </p>
-            <p> <input placeholder="1 if admin, 0 if no" type="text" name="isAdminEdit"> </p>
-            <p> <input value="Save" type="submit" name="saveEdit">
-                <input value="Back" type="submit" name="backEdit"> </p>
-        </form>
+        <br/>
+        <div class="container-fluid">
+            <form method="post" action="edit.php">
+                <p> <input placeholder="Username" type="text" name="usernameEdit"> </p>
+                <p> <input placeholder="Email" type="text" name="emailEdit"> </p>
+                <p> <input placeholder="Password" type="password" name="passwordEdit"> </p>
+                <p> <input placeholder="Picture URL" type="text" name="pictureEdit"> </p>
+                <p> <input placeholder="1 if admin, 0 if no" type="text" name="isAdminEdit"> </p>
+                <p> <input class="btn-success" value="Save" type="submit" name="saveEdit">
+                    <input class="btn-danger" value="Cancel" type="submit" name="cancelEdit"> </p>
+            </form>
+        </div>
     </body>
 </html>

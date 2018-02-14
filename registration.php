@@ -42,7 +42,7 @@ if ($_SESSION['active']){
                 exit;
             } else {
                 foreach ($errors as $error)
-                    echo $error;
+                    echo "<h5 class='container-fluid text-danger'>$error</h5>";
                 $errors = [];
             }
         }
@@ -55,14 +55,16 @@ if ($_SESSION['active']){
     <head>
     </head>
     <body>
-        <h2>Registration</h2>
-        <form method="post" action="registration.php">
-            <p> <input placeholder="User Name" type="text" name="usernameRegister"> </p>
-            <p> <input placeholder="Email" type="text" name="emailRegister"> </p>
-            <p> <input placeholder="Password" type="password" name="passwordRegister"> </p>
-            <p> <input placeholder="Confirm Password" type="password" name="confirmPasswordRegister"> </p>
-            <p> <input value="Register" type="submit" name="registerBtn"> </p>
-            <p> <a href="index.php" type="submit" name="goToLoginView">Already have an account?</a> </p>
-        </form>
+        <div class="container-fluid">
+            <h2>Registration</h2>
+            <form method="post" action="registration.php">
+                <p> <input placeholder="User Name" type="text" name="usernameRegister"> </p>
+                <p> <input placeholder="Email" type="text" name="emailRegister"> </p>
+                <p> <input placeholder="Password" type="password" name="passwordRegister"> </p>
+                <p> <input placeholder="Confirm Password" type="password" name="confirmPasswordRegister"> </p>
+                <p> <input class="btn-success" value="Register" type="submit" name="registerBtn"> </p>
+                <p> <a class="btn-info" href="index.php" type="submit" name="goToLoginView">Already have an account?</a> </p>
+            </form>
+        </div>
     </body>
 </html>
